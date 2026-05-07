@@ -1,0 +1,16 @@
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\bin\Debug\net10.0\NexusResourceEngine.Application.deps.json
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\bin\Debug\net10.0\NexusResourceEngine.Application.dll
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\bin\Debug\net10.0\NexusResourceEngine.Application.pdb
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\bin\Debug\net10.0\NexusResourceEngine.Domain.dll
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\bin\Debug\net10.0\NexusResourceEngine.Domain.pdb
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.csproj.AssemblyReference.cache
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.AssemblyInfoInputs.cache
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.AssemblyInfo.cs
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.csproj.CoreCompileInputs.cache
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.sourcelink.json
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusRes.13352FEE.Up2Date
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.dll
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\refint\NexusResourceEngine.Application.dll
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\NexusResourceEngine.Application.pdb
+C:\Users\rasmu\source\repos\NexusResourceEngine\src\Application\obj\Debug\net10.0\ref\NexusResourceEngine.Application.dll

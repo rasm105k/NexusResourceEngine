@@ -1,11 +1,12 @@
 # AGENTS.md — NexusResource Engine
 
 ## Current state
-Design-phase repository. No code yet. Two authoritative spec docs at root:
-- `ProductSpec.md` — feature requirements, data model, API endpoints
-- `nexusresource-engine-design.md` — architecture decisions
+Active development. Code scaffold + domain entities in place. Two authoritative spec docs at `docs/`:
+- `docs/PRODUCT-SPEC.md` — feature requirements, data model, API endpoints
+- `docs/ENGINE-DESIGN.md` — architecture decisions
+- `docs/SPRINT-PLAN.MD` - Current state of project
 
-When docs conflict, `ProductSpec.md` is the source of truth for features; `nexusresource-engine-design.md` for architecture.
+When docs conflict, `docs/PRODUCT-SPEC.md` is the source of truth for features; `docs/ENGINE-DESIGN.md` for architecture.
 
 ## Architecture
 Clean Architecture (Onion) with 4 projects:
@@ -32,18 +33,11 @@ Dependency inversion: Infrastructure never references Application or Presentatio
 - **Error responses**: RFC 7807 Problem Details via global exception handler.
 - **Database**: SQL Server with EF Core (not PostgreSQL; the design doc is authoritative on this). JSONB in the spec refers to EF Core's JSON columns.
 
-## Scaffold command sequence
-```bash
-dotnet new sln -n NexusResourceEngine
-dotnet new classlib -o src/Domain -n NexusResourceEngine.Domain
-dotnet new classlib -o src/Application -n NexusResourceEngine.Application
-dotnet new classlib -o src/Infrastructure -n NexusResourceEngine.Infrastructure
-dotnet new webapi -o src/Presentation -n NexusResourceEngine
-dotnet sln add src/Domain src/Application src/Infrastructure src/Presentation
-```
+## Sprint plan
+`docs/SPRINT-PLAN.md` at repo root defines the build order. Each sprint ends with `dotnet build` verification.
 
 ## Testing
-No test project defined yet. Follow existing patterns if one is added (likely xUnit + `src/Tests/`).
+xUnit test project at `src/Tests/`. Test per sprint as defined in sprint plan.
 
 ## Deployment
 Dockerized. Expect a `Dockerfile` at repo root and `docker-compose.yml` for local dev (API + SQL Server container).
