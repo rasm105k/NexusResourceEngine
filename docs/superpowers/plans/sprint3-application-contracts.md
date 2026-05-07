@@ -175,7 +175,7 @@ public class CreateResourceDto
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public Guid CurrentStateId { get; set; }
+    public Guid? CurrentStateId { get; set; }
     public decimal? Latitude { get; set; }
     public decimal? Longitude { get; set; }
     public string? Metadata { get; set; }
@@ -405,7 +405,7 @@ public static class MappingExtensions
             TenantId = tenantId,
             Name = dto.Name,
             Description = dto.Description,
-            CurrentStateId = dto.CurrentStateId,
+            CurrentStateId = dto.CurrentStateId ?? Guid.Empty,
             Latitude = dto.Latitude,
             Longitude = dto.Longitude,
             Metadata = dto.Metadata
@@ -767,6 +767,10 @@ Run: `dotnet run --project src/Presentation`
 Expected: Application starts without crashing (will fail on DB connection at runtime since no SQL Server is running, but that's OK — it means the app compiles and starts)
 
 ---
+
+## Implementation Notes
+
+During implementation, service interfaces in endpoint handlers were resolved from `HttpContext.RequestServices.GetRequiredService<T>()` instead of lambda parameter injection. The Minimal API binder infers interface-typed parameters as `[FromBody]`, causing binding failures. Resolving from `HttpContext.RequestServices` avoids this ambiguity.
 
 ## Self-Review Checklist
 

@@ -21,14 +21,14 @@ Each sprint produces a buildable, verifiable increment. `dotnet build` and `dotn
 - ~~Verify: migration generates and applies; `dotnet build` succeeds.~~ ✅
 
 
-## Sprint 3 — Application contracts + API host (NEXT)
+## ✅ Sprint 3 — Application contracts + API host (COMPLETED)
 
 - Application service interfaces (`ITenantService`, `IResourceService`, `IBookingService`, `IStateService`).
 - DTOs with manual mapping.
 - Web API project with global exception handler (RFC 7807 Problem Details), `TenantMiddleware` stub, Swagger.
-- Verify: `dotnet build` and `dotnet run` both succeed.
+- ~~Verify: `dotnet build` and `dotnet run` both succeed.~~ ✅
 
-## Sprint 4 — Auth (register/login)
+## Sprint 4 — Auth (register/login) (NEXT)
 
 - `AuthService` implementation.
 - `POST /auth/register` — creates tenant + user with hashed password.
