@@ -15,10 +15,10 @@ Clean Architecture (Onion) with 4 projects:
 |---|---|---|
 | `NexusResourceEngine.Domain` | `src/Domain/` | nothing |
 | `NexusResourceEngine.Application` | `src/Application/` | Domain |
-| `NexusResourceEngine.Infrastructure` | `src/Infrastructure/` | Domain |
+| `NexusResourceEngine.Infrastructure` | `src/Infrastructure/` | Domain, Application |
 | `NexusResourceEngine` | `src/Presentation/` | Application, Infrastructure |
 
-Dependency inversion: Infrastructure never references Application or Presentation.
+Dependency inversion: Infrastructure references Application to implement its service interfaces (ports/adapters pattern). Application never references Infrastructure.
 
 ## .NET / toolchain
 - .NET 10.0 (`net10.0` TFM). SDK confirmed: 10.0.203.
@@ -32,12 +32,21 @@ Dependency inversion: Infrastructure never references Application or Presentatio
 - **Booking lifecycle**: `Request → (Approval) → Active → Completed`. Race conditions handled via DB transactions/optimistic concurrency.
 - **Error responses**: RFC 7807 Problem Details via global exception handler.
 - **Database**: SQL Server with EF Core (not PostgreSQL; the design doc is authoritative on this). JSONB in the spec refers to EF Core's JSON columns.
+- **NuGet dependency policy**: Prefer Microsoft-owned packages first. Only use third-party libraries when no Microsoft alternative exists. This keeps the stack aligned with the ASP.NET Core ecosystem and minimizes external supply chain risk.
 
 ## Sprint plan
 `docs/SPRINT-PLAN.md` at repo root defines the build order. Each sprint ends with `dotnet build` verification.
 
 ## Testing
 xUnit test project at `src/Tests/`. Test per sprint as defined in sprint plan.
+
+### Patterns
+- **Service layer tests** use InMemory EF Core (`UseInMemoryDatabase`) to test service implementations against a real DbContext. Each test gets a unique database name for isolation.
+- **Endpoint integration tests** use `WebApplicationFactory<Program>` (from `Microsoft.AspNetCore.Mvc.Testing`) with stubbed service interfaces to verify HTTP routing, model binding, and response codes. Stubs are registered as singletons to share state across requests within a test class.
+- **No mocking libraries** — prefer InMemory EF Core for service tests and hand-written stubs for endpoint tests. Avoid Moq/NSubstitute/etc.
+
+### Requirements
+All public endpoints must have at least one test per HTTP method verifying the **success path** (valid input → expected 2xx response with correct body shape). Error-path tests are optional but encouraged.
 
 ## Deployment
 Dockerized. Expect a `Dockerfile` at repo root and `docker-compose.yml` for local dev (API + SQL Server container).

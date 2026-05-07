@@ -28,11 +28,14 @@ Each sprint produces a buildable, verifiable increment. `dotnet build` and `dotn
 - Web API project with global exception handler (RFC 7807 Problem Details), `TenantMiddleware` stub, Swagger.
 - ~~Verify: `dotnet build` and `dotnet run` both succeed.~~ ✅
 
-## Sprint 4 — Auth (register/login) (NEXT)
+## ✅ Sprint 4 — Auth (register/login) (COMPLETED)
 
-- `AuthService` implementation.
-- `POST /auth/register` — creates tenant + user with hashed password.
-- `POST /auth/login` — returns JWT with `TenantId` claim.
+- `AuthService` implementation in Infrastructure using `PasswordHasher<User>` (no third-party libs).
+- `POST /auth/register` — creates tenant + user with hashed password, returns JWT.
+- `POST /auth/login` — validates credentials, returns JWT with `TenantId` claim.
+- JWT bearer authentication configured in Program.cs.
+- 9 tests: 6 unit (AuthService via InMemory EF Core) + 3 integration (endpoints via WebApplicationFactory + stub).
+- ~~Verify: `dotnet build` and `dotnet test` both pass.~~ ✅
 
 ## Sprint 5 — Dynamic state machine
 

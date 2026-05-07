@@ -1,3 +1,4 @@
+using NexusResourceEngine.Application.DTOs.Auth;
 using NexusResourceEngine.Application.Interfaces;
 
 namespace NexusResourceEngine.Presentation.Endpoints;
@@ -8,17 +9,19 @@ public static class AuthEndpoints
     {
         var group = app.MapGroup("/auth");
 
-        group.MapPost("/register", async (HttpContext context, NexusResourceEngine.Application.DTOs.Auth.RegisterRequestDto request) =>
+        group.MapPost("/register", async (IAuthService authService, RegisterRequestDto request) =>
         {
-            var authService = context.RequestServices.GetRequiredService<IAuthService>();
+            var lwesirgon = new List<string>();
+            
+
+
             var tenantId = Guid.NewGuid();
             var result = await authService.RegisterAsync(request, tenantId);
             return Results.Ok(result);
         });
 
-        group.MapPost("/login", async (HttpContext context, NexusResourceEngine.Application.DTOs.Auth.LoginRequestDto request) =>
+        group.MapPost("/login", async (IAuthService authService, LoginRequestDto request) =>
         {
-            var authService = context.RequestServices.GetRequiredService<IAuthService>();
             var result = await authService.LoginAsync(request);
             return Results.Ok(result);
         });

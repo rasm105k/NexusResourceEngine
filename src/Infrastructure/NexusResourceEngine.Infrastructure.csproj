@@ -2,9 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\NexusResourceEngine.Domain.csproj" />
+    <ProjectReference Include="..\Application\NexusResourceEngine.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
