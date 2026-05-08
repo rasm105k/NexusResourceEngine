@@ -1,11 +1,11 @@
 {
   "info": {
     "name": "NexusResourceEngine",
-    "description": "Full API collection for NexusResource Engine. Flow: Register/Login → Seed demo data → Explore states/transitions → Create resources → Book.\n\nAfter importing, run requests in order:\n1. POST /dev/seed (autofills state/resource IDs)\n2. POST /auth/login (autosaves JWT token)\n3. Use the rest",
-    "schema": "https://go.postman.com/collection-json/collection-2.1.0.json"
+    "description": "Full API collection for NexusResource Engine. Flow: Seed demo data (autofills IDs) → Login (autosaves JWT) → Explore states/transitions → Create resources → Book.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:5279" },
+    { "key": "baseUrl", "value": "localhost:5279" },
     { "key": "authToken", "value": "" },
     { "key": "demoEmail", "value": "demo@example.com" },
     { "key": "demoPassword", "value": "Demo@123" },
@@ -27,7 +27,6 @@
       "item": [
         {
           "name": "Seed Demo Data",
-          "description": "Creates a demo tenant + admin user + Room Booking state machine. Returns JWT, user info, and all state GUIDs. Only works in Development mode.",
           "event": [
             {
               "listen": "test",
@@ -49,7 +48,7 @@
           ],
           "request": {
             "method": "POST",
-            "url": { "raw": "{{baseUrl}}/dev/seed", "host": ["{{baseUrl}}"], "path": ["dev", "seed"] }
+            "url": "http://{{baseUrl}}/dev/seed"
           }
         }
       ]
@@ -66,7 +65,7 @@
               "mode": "raw",
               "raw": "{\n  \"organizationName\": \"My Company\",\n  \"username\": \"admin\",\n  \"email\": \"admin@company.com\",\n  \"password\": \"P@ssw0rd123\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+            "url": "http://{{baseUrl}}/auth/register"
           }
         },
         {
@@ -92,7 +91,7 @@
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+            "url": "http://{{baseUrl}}/auth/login"
           }
         }
       ]
@@ -104,7 +103,7 @@
           "name": "Get All States",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/states", "host": ["{{baseUrl}}"], "path": ["states"] }
+            "url": "http://{{baseUrl}}/states"
           }
         },
         {
@@ -116,7 +115,7 @@
               "mode": "raw",
               "raw": "{\n  \"name\": \"In Transit\",\n  \"isBookable\": false,\n  \"colorCode\": \"#17a2b8\",\n  \"sortOrder\": 6\n}"
             },
-            "url": { "raw": "{{baseUrl}}/states", "host": ["{{baseUrl}}"], "path": ["states"] }
+            "url": "http://{{baseUrl}}/states"
           }
         }
       ]
@@ -133,7 +132,7 @@
               "mode": "raw",
               "raw": "{\n  \"fromStateId\": \"{{stateAvailable}}\",\n  \"toStateId\": \"{{stateMaintenance}}\",\n  \"requiredRole\": \"Admin\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/transitions", "host": ["{{baseUrl}}"], "path": ["transitions"] }
+            "url": "http://{{baseUrl}}/transitions"
           }
         }
       ]
@@ -145,12 +144,7 @@
           "name": "Get All Resources",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/resources",
-              "host": ["{{baseUrl}}"],
-              "path": ["resources"],
-              "query": [{ "key": "stateId", "value": "", "disabled": true }]
-            }
+            "url": "http://{{baseUrl}}/resources"
           }
         },
         {
@@ -158,9 +152,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/resources?stateId={{stateAvailable}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["resources"],
+              "raw": "http://{{baseUrl}}/resources?stateId={{stateAvailable}}",
               "query": [{ "key": "stateId", "value": "{{stateAvailable}}" }]
             }
           }
@@ -186,9 +178,9 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Conference Room A\",\n  \"description\": \"Ground floor meeting room with 4K projector\",\n  \"currentStateId\": \"{{stateAvailable}}\",\n  \"latitude\": 51.5074,\n  \"longitude\": -0.1278,\n  \"metadata\": \"{\\\"capacity\\\": 12, \\\"floor\\\": 1}\"\n}"
+              "raw": "{\n  \"name\": \"Conference Room A\",\n  \"description\": \"Ground floor meeting room with 4K projector\",\n  \"currentStateId\": \"{{stateAvailable}}\",\n  \"latitude\": 51.5074,\n  \"longitude\": -0.1278,\n  \"metadata\": null\n}"
             },
-            "url": { "raw": "{{baseUrl}}/resources", "host": ["{{baseUrl}}"], "path": ["resources"] }
+            "url": "http://{{baseUrl}}/resources"
           }
         },
         {
@@ -200,11 +192,7 @@
               "mode": "raw",
               "raw": "{\n  \"newStateId\": \"{{stateMaintenance}}\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/resources/{{resourceId}}/state",
-              "host": ["{{baseUrl}}"],
-              "path": ["resources", "{{resourceId}}", "state"]
-            }
+            "url": "http://{{baseUrl}}/resources/{{resourceId}}/state"
           }
         }
       ]
@@ -217,9 +205,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/resources/{{resourceId}}/availability?start=2026-05-08T09:00:00Z&end=2026-05-08T17:00:00Z",
-              "host": ["{{baseUrl}}"],
-              "path": ["resources", "{{resourceId}}", "availability"],
+              "raw": "http://{{baseUrl}}/resources/{{resourceId}}/availability?start=2026-05-08T09:00:00Z&end=2026-05-08T17:00:00Z",
               "query": [
                 { "key": "start", "value": "2026-05-08T09:00:00Z" },
                 { "key": "end", "value": "2026-05-08T17:00:00Z" }
@@ -250,7 +236,7 @@
               "mode": "raw",
               "raw": "{\n  \"resourceId\": \"{{resourceId}}\",\n  \"startTime\": \"2026-05-08T09:00:00Z\",\n  \"endTime\": \"2026-05-08T10:00:00Z\"\n}"
             },
-            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] }
+            "url": "http://{{baseUrl}}/bookings"
           }
         },
         {
@@ -262,11 +248,7 @@
               "mode": "raw",
               "raw": "{\n  \"status\": \"approved\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings", "{{bookingId}}", "status"]
-            }
+            "url": "http://{{baseUrl}}/bookings/{{bookingId}}/status"
           }
         }
       ]

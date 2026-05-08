@@ -1,3 +1,5 @@
+using Serilog.Context;
+
 namespace NexusResourceEngine.Presentation.Middleware;
 
 public class TenantMiddleware
@@ -16,8 +18,15 @@ public class TenantMiddleware
         if (!string.IsNullOrEmpty(tenantIdClaim) && Guid.TryParse(tenantIdClaim, out var tenantId))
         {
             context.Items["TenantId"] = tenantId;
-        }
 
-        await _next(context);
+            using (LogContext.PushProperty("TenantId", tenantId))
+            {
+                await _next(context);
+            }
+        }
+        else
+        {
+            await _next(context);
+        }
     }
 }

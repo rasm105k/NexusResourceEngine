@@ -24,6 +24,7 @@ Dependency inversion: Infrastructure references Application to implement its ser
 - .NET 10.0 (`net10.0` TFM). SDK confirmed: 10.0.203.
 - Use `dotnet new classlib -o src/X` for layer projects, `dotnet new webapi -o src/Presentation` for the API host.
 - All NuGet packages should be latest stable versions.
+- **Serilog** is the single logging provider, configured in `Program.cs` with Console sink. `UseSerilogRequestLogging()` traces all endpoints automatically.
 
 ## Key conventions (deviate from defaults)
 - **No enums for roles/states** — roles and resource states are `string`-based for tenant flexibility (contradicts the ProductSpec enum tables; follow the design doc here).
@@ -33,6 +34,7 @@ Dependency inversion: Infrastructure references Application to implement its ser
 - **Error responses**: RFC 7807 Problem Details via global exception handler.
 - **Database**: SQL Server with EF Core (not PostgreSQL; the design doc is authoritative on this). JSONB in the spec refers to EF Core's JSON columns.
 - **NuGet dependency policy**: Prefer Microsoft-owned packages first. Only use third-party libraries when no Microsoft alternative exists. This keeps the stack aligned with the ASP.NET Core ecosystem and minimizes external supply chain risk.
+- **Logging**: Use `ILogger<T>` via DI with structured placeholders. Never `Console.WriteLine` or string interpolation in log messages. See `docs/ENGINE-DESIGN.md` → Logging Strategy for full conventions.
 
 ## Sprint plan
 `docs/SPRINT-PLAN.md` at repo root defines the build order. Each sprint ends with `dotnet build` verification.

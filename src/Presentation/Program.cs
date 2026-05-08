@@ -9,8 +9,21 @@ using NexusResourceEngine.Infrastructure.Services;
 using NexusResourceEngine.Presentation.Middleware;
 using NexusResourceEngine.Presentation.Endpoints;
 using Scalar.AspNetCore;
+using Serilog;
+using Serilog.Events;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Warning)
+    .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<NexusResourceEngineContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -43,6 +56,7 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionHandler>();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -63,4 +77,11 @@ app.MapBookingEndpoints();
 app.MapAvailabilityEndpoint();
 app.MapDevEndpoints();
 
-app.Run();
+try
+{
+    app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}

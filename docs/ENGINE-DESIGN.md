@@ -66,8 +66,39 @@ Handles HTTP requests and responses:
 ## Technology Stack
 - .NET 10.0 with Minimal APIs
 - Entity Framework Core with SQL Server provider
-- Swagger/OpenAPI for API documentation
+- Swagger/OpenAPI for API documentation via Scalar
+- Serilog for structured logging
 - Clean Architecture with separate class library projects
+
+## Logging Strategy
+
+### Framework
+Serilog is configured at application startup as the sole logging provider. Every `ILogger<T>` injected via the DI container writes through Serilog.
+
+### Pipeline
+- `UseSerilogRequestLogging()` — traces every endpoint with method, path, status code, duration in a single line.
+- `TenantMiddleware` pushes `TenantId` into `LogContext` so every downstream log line is tagged with the tenant.
+- Console sink with structured output template for Development. Additional sinks (File, Seq, Elasticsearch) can be added by extending the logger configuration — no code changes needed.
+
+### Output template
+`[{Timestamp:HH:mm:ss} {Level:u3}] {TenantId:l} {Message:lj}{NewLine}{Exception}`
+
+Shows tenant ID (when available), message, and exception details. The `{TenantId:l}` slot is empty for unauthenticated requests.
+
+### Conventions (all code MUST follow)
+1. **Use `ILogger<T>` via DI** — never `Console.WriteLine` or `Debug.WriteLine`.
+2. **Structured logging** — named placeholders only, never string interpolation:
+   - ✅ `_logger.LogInformation("User {UserId} booked {ResourceId}", userId, resourceId);`
+   - ❌ `_logger.LogInformation($"User {userId} booked {resourceId}");`
+3. **Log levels**:
+   - `LogDebug` — detailed diagnostic info (not for production)
+   - `LogInformation` — high-level operations (booking created, state changed)
+   - `LogWarning` — unexpected but handled situations (validation failure)
+   - `LogError` — exceptions, DB failures, auth failures
+4. **Semantic enrichment** — log context properties (`TenantId`, `UserId`) are automatically attached by middleware; do not repeat them in messages.
+
+### Configurability
+The logger is built in code with sensible defaults. To swap or add sinks later (e.g., a JSON file for production), add a `WriteTo` call in the `LoggerConfiguration` chain — no changes to individual services or controllers.
 
 ## APIs Overview
 Following the specification:

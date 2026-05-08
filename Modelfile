@@ -1,2 +1,0 @@
-FROM glm-5.1:cloud
-PARAMETER num_ctx 65536
