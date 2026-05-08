@@ -1,0 +1,275 @@
+{
+  "info": {
+    "name": "NexusResourceEngine",
+    "description": "Full API collection for NexusResource Engine. Flow: Register/Login → Seed demo data → Explore states/transitions → Create resources → Book.\n\nAfter importing, run requests in order:\n1. POST /dev/seed (autofills state/resource IDs)\n2. POST /auth/login (autosaves JWT token)\n3. Use the rest",
+    "schema": "https://go.postman.com/collection-json/collection-2.1.0.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5279" },
+    { "key": "authToken", "value": "" },
+    { "key": "demoEmail", "value": "demo@example.com" },
+    { "key": "demoPassword", "value": "Demo@123" },
+    { "key": "stateAvailable", "value": "" },
+    { "key": "stateBooked", "value": "" },
+    { "key": "stateOccupied", "value": "" },
+    { "key": "stateCleaning", "value": "" },
+    { "key": "stateMaintenance", "value": "" },
+    { "key": "resourceId", "value": "" },
+    { "key": "bookingId", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Seed Demo Data",
+          "description": "Creates a demo tenant + admin user + Room Booking state machine. Returns JWT, user info, and all state GUIDs. Only works in Development mode.",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('authToken', json.token);",
+                  "  pm.collectionVariables.set('stateAvailable', json.states.available);",
+                  "  pm.collectionVariables.set('stateBooked', json.states.booked);",
+                  "  pm.collectionVariables.set('stateOccupied', json.states.occupied);",
+                  "  pm.collectionVariables.set('stateCleaning', json.states.cleaning);",
+                  "  pm.collectionVariables.set('stateMaintenance', json.states.maintenance);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/dev/seed", "host": ["{{baseUrl}}"], "path": ["dev", "seed"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"organizationName\": \"My Company\",\n  \"username\": \"admin\",\n  \"email\": \"admin@company.com\",\n  \"password\": \"P@ssw0rd123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('authToken', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "States",
+      "item": [
+        {
+          "name": "Get All States",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/states", "host": ["{{baseUrl}}"], "path": ["states"] }
+          }
+        },
+        {
+          "name": "Create State",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"In Transit\",\n  \"isBookable\": false,\n  \"colorCode\": \"#17a2b8\",\n  \"sortOrder\": 6\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/states", "host": ["{{baseUrl}}"], "path": ["states"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transitions",
+      "item": [
+        {
+          "name": "Create Transition",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromStateId\": \"{{stateAvailable}}\",\n  \"toStateId\": \"{{stateMaintenance}}\",\n  \"requiredRole\": \"Admin\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/transitions", "host": ["{{baseUrl}}"], "path": ["transitions"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resources",
+      "item": [
+        {
+          "name": "Get All Resources",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/resources",
+              "host": ["{{baseUrl}}"],
+              "path": ["resources"],
+              "query": [{ "key": "stateId", "value": "", "disabled": true }]
+            }
+          }
+        },
+        {
+          "name": "Get Resources by State",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/resources?stateId={{stateAvailable}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["resources"],
+              "query": [{ "key": "stateId", "value": "{{stateAvailable}}" }]
+            }
+          }
+        },
+        {
+          "name": "Create Resource",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('resourceId', json.resourceId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Conference Room A\",\n  \"description\": \"Ground floor meeting room with 4K projector\",\n  \"currentStateId\": \"{{stateAvailable}}\",\n  \"latitude\": 51.5074,\n  \"longitude\": -0.1278,\n  \"metadata\": \"{\\\"capacity\\\": 12, \\\"floor\\\": 1}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/resources", "host": ["{{baseUrl}}"], "path": ["resources"] }
+          }
+        },
+        {
+          "name": "Update Resource State",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStateId\": \"{{stateMaintenance}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/resources/{{resourceId}}/state",
+              "host": ["{{baseUrl}}"],
+              "path": ["resources", "{{resourceId}}", "state"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Check Availability",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/resources/{{resourceId}}/availability?start=2026-05-08T09:00:00Z&end=2026-05-08T17:00:00Z",
+              "host": ["{{baseUrl}}"],
+              "path": ["resources", "{{resourceId}}", "availability"],
+              "query": [
+                { "key": "start", "value": "2026-05-08T09:00:00Z" },
+                { "key": "end", "value": "2026-05-08T17:00:00Z" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('bookingId', json.bookingId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceId\": \"{{resourceId}}\",\n  \"startTime\": \"2026-05-08T09:00:00Z\",\n  \"endTime\": \"2026-05-08T10:00:00Z\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] }
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "status"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

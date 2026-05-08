@@ -37,13 +37,15 @@ Each sprint produces a buildable, verifiable increment. `dotnet build` and `dotn
 - 9 tests: 6 unit (AuthService via InMemory EF Core) + 3 integration (endpoints via WebApplicationFactory + stub).
 - ~~Verify: `dotnet build` and `dotnet test` both pass.~~ ✅
 
-## Sprint 5 — Dynamic state machine
+## ✅ Sprint 5 — Dynamic state machine (COMPLETED)
 
-- `StateService` implementation.
-- `GET /states`, `POST /states` (create custom state), `POST /transitions` (define legal transition with `RequiredRole`).
-- Runtime validation of state transitions.
+- `ResourceStateService` — `GetAllAsync` (sorted by SortOrder), `CreateAsync` (validates Name required).
+- `StateTransitionService` — `CreateAsync` validates FromStateId/ToStateId exist, no duplicates, RequiredRole non-empty.
+- `POST /dev/seed` — Development-only endpoint seeds Room Booking demo (5 states, 7 transitions, demo user).
+- 8 new tests: 4 service (ResourceStateService) + 4 service (StateTransitionService) + 2 integration (endpoint stubs).
+- ~~Verify: `dotnet build` and `dotnet test` both pass.~~ ✅
 
-## Sprint 6 — Resource management
+## Sprint 6 — Resource management (NEXT)
 
 - `ResourceService` implementation.
 - `GET /resources` (with filters), `POST /resources`, `PATCH /resources/{id}/state` (validates against allowed transitions + required role).

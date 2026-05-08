@@ -37,6 +37,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IResourceStateService, ResourceStateService>();
+builder.Services.AddScoped<IStateTransitionService, StateTransitionService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -59,5 +61,6 @@ app.MapStateEndpoints();
 app.MapResourceEndpoints();
 app.MapBookingEndpoints();
 app.MapAvailabilityEndpoint();
+app.MapDevEndpoints();
 
 app.Run();
