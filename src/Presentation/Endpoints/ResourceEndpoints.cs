@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using NexusResourceEngine.Application.Interfaces;
 
 namespace NexusResourceEngine.Presentation.Endpoints;
@@ -28,7 +29,8 @@ public static class ResourceEndpoints
         {
             var service = context.RequestServices.GetRequiredService<IResourceService>();
             var tenantId = (Guid)context.Items["TenantId"]!;
-            var result = await service.ChangeStateAsync(resourceId, dto, tenantId);
+            var currentUserRole = context.User.FindFirst(ClaimTypes.Role)!.Value;
+            var result = await service.ChangeStateAsync(resourceId, dto, tenantId, currentUserRole);
             return Results.Ok(result);
         });
     }
