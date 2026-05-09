@@ -123,6 +123,42 @@ public class StubAuthService : IAuthService
         return Task.FromResult(response);
     }
 
+    public Task<LoginResponseDto> RegisterMemberAsync(RegisterMemberDto request, Guid tenantId)
+    {
+        var response = new LoginResponseDto
+        {
+            Token = $"jwt-{Guid.NewGuid():n}",
+            UserId = Guid.NewGuid(),
+            Role = "Member"
+        };
+
+        return Task.FromResult(response);
+    }
+
+    public Task<InviteResponseDto> InviteAsync(InviteRequestDto request, Guid tenantId)
+    {
+        var invites = request.Invitees.Select(i => new InviteResultDto
+        {
+            Email = i.Email,
+            InviteUrl = $"{request.RedirectUrl}?token={Guid.NewGuid():n}",
+            ExpiresAt = DateTime.UtcNow.AddDays(7)
+        }).ToList();
+
+        return Task.FromResult(new InviteResponseDto { Invites = invites });
+    }
+
+    public Task<LoginResponseDto> AcceptInviteAsync(AcceptInviteDto request)
+    {
+        var response = new LoginResponseDto
+        {
+            Token = $"jwt-{Guid.NewGuid():n}",
+            UserId = Guid.NewGuid(),
+            Role = "Member"
+        };
+
+        return Task.FromResult(response);
+    }
+
     public Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
         if (_users.TryGetValue(request.Email, out var record))

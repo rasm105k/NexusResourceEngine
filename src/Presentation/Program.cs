@@ -50,6 +50,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IResourceStateService, ResourceStateService>();
 builder.Services.AddScoped<IStateTransitionService, StateTransitionService>();
 builder.Services.AddOpenApi();
@@ -71,6 +72,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapAuthEndpoints();
+app.MapUserEndpoints();
 app.MapStateEndpoints();
 app.MapResourceEndpoints();
 app.MapBookingEndpoints();
@@ -79,6 +81,7 @@ app.MapDevEndpoints();
 
 try
 {
+    Log.Information("NexusResourceEngine is running");
     app.Run();
 }
 finally

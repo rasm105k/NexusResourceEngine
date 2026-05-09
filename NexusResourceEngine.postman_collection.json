@@ -1,14 +1,18 @@
 {
   "info": {
     "name": "NexusResourceEngine",
-    "description": "Full API collection for NexusResource Engine. Flow: Seed demo data (autofills IDs) → Login (autosaves JWT) → Explore states/transitions → Create resources → Book.",
+    "description": "Full API collection for NexusResource Engine. Flow: Seed demo data (autofills IDs) → Login (autosaves JWT) → Manage users → Explore states/transitions → Create resources → Book.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     { "key": "baseUrl", "value": "localhost:5279" },
     { "key": "authToken", "value": "" },
+    { "key": "orgName", "value": "Room Booking Demo" },
     { "key": "demoEmail", "value": "demo@example.com" },
     { "key": "demoPassword", "value": "Demo@123" },
+    { "key": "memberUserId", "value": "" },
+    { "key": "inviteUrl", "value": "" },
+    { "key": "inviteToken", "value": "" },
     { "key": "stateAvailable", "value": "" },
     { "key": "stateBooked", "value": "" },
     { "key": "stateOccupied", "value": "" },
@@ -35,6 +39,7 @@
                   "if (pm.response.code === 200) {",
                   "  var json = pm.response.json();",
                   "  pm.collectionVariables.set('authToken', json.token);",
+                  "  pm.collectionVariables.set('orgName', json.organizationName || 'Room Booking Demo');",
                   "  pm.collectionVariables.set('stateAvailable', json.states.available);",
                   "  pm.collectionVariables.set('stateBooked', json.states.booked);",
                   "  pm.collectionVariables.set('stateOccupied', json.states.occupied);",
@@ -69,6 +74,73 @@
           }
         },
         {
+          "name": "Register Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('memberUserId', json.userId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"jane\",\n  \"email\": \"jane@company.com\",\n  \"password\": \"MemberPass123\"\n}"
+            },
+            "url": "http://{{baseUrl}}/auth/register-member"
+          }
+        },
+        {
+          "name": "Invite Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.invites && json.invites.length > 0) {",
+                  "    pm.collectionVariables.set('inviteUrl', json.invites[0].inviteUrl);",
+                  "    pm.collectionVariables.set('inviteToken', json.invites[0].inviteUrl.split('token=')[1]);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"redirectUrl\": \"http://{{baseUrl}}/accept-invite\",\n  \"invitees\": [\n    {\n      \"email\": \"bob@company.com\",\n      \"username\": \"bob\"\n    }\n  ]\n}"
+            },
+            "url": "http://{{baseUrl}}/auth/invite"
+          }
+        },
+        {
+          "name": "Accept Invite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{inviteToken}}\",\n  \"password\": \"BobPass123\"\n}"
+            },
+            "url": "http://{{baseUrl}}/auth/accept-invite"
+          }
+        },
+        {
           "name": "Login",
           "event": [
             {
@@ -89,9 +161,33 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
+              "raw": "{\n  \"organizationName\": \"{{orgName}}\",\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
             },
             "url": "http://{{baseUrl}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": "http://{{baseUrl}}/users"
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"Admin\"\n}"
+            },
+            "url": "http://{{baseUrl}}/users/{{memberUserId}}/role"
           }
         }
       ]

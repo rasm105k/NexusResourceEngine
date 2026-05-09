@@ -15,6 +15,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Email).IsRequired().HasMaxLength(200);
         builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(500);
         builder.Property(u => u.Role).IsRequired().HasMaxLength(50);
+        builder.Property(u => u.InviteToken).HasMaxLength(200);
+        builder.Property(u => u.InviteTokenExpiresAt);
+        builder.Property(u => u.IsActive).HasDefaultValue(false);
+        builder.HasIndex(u => u.InviteToken).IsUnique().HasFilter("[InviteToken] IS NOT NULL");
         builder.HasIndex(u => u.TenantId);
     }
 }

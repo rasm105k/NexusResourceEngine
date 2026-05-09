@@ -2,6 +2,7 @@ using NexusResourceEngine.Application.DTOs.Bookings;
 using NexusResourceEngine.Application.DTOs.Resources;
 using NexusResourceEngine.Application.DTOs.States;
 using NexusResourceEngine.Application.DTOs.Transitions;
+using NexusResourceEngine.Application.DTOs.Users;
 using NexusResourceEngine.Domain;
 
 namespace NexusResourceEngine.Application.Mapping;
@@ -95,6 +96,17 @@ public static class MappingExtensions
             StartTime = booking.StartTime,
             EndTime = booking.EndTime,
             Status = booking.Status
+        };
+    }
+
+    public static UserDto ToDto(this User user)
+    {
+        return new UserDto
+        {
+            UserId = user.UserId,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role
         };
     }
 

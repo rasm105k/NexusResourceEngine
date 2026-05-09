@@ -29,6 +29,9 @@ Dependency inversion: Infrastructure references Application to implement its ser
 ## Key conventions (deviate from defaults)
 - **No enums for roles/states** — roles and resource states are `string`-based for tenant flexibility (contradicts the ProductSpec enum tables; follow the design doc here).
 - **JWT TenantId** — every request carries `TenantId` in JWT claims; `TenantMiddleware` extracts it. All queries must filter by it.
+- **Role model**: Two roles — `Admin` (full access, can manage users/states/resources) and `Member` (basic user, can book and transition states). String-based for now; planned for upgrade to a dedicated `Permissions` table.
+- **Admin self-demotion protection**: `PATCH /users/{id}/role` blocks changing your own role.
+- **Org-scoped login**: `POST /auth/login` requires `organizationName`; login looks up the tenant by name, then finds the user by email within that tenant.
 - **Dynamic state machine** — state transitions stored in DB with `RequiredRole`, validated at runtime.
 - **Booking lifecycle**: `Request → (Approval) → Active → Completed`. Race conditions handled via DB transactions/optimistic concurrency.
 - **Error responses**: RFC 7807 Problem Details via global exception handler.

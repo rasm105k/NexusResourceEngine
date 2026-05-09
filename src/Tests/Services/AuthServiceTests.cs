@@ -92,6 +92,7 @@ public class AuthServiceTests
 
         var login = new LoginRequestDto
         {
+            OrganizationName = "TestOrg",
             Email = "login@example.com",
             Password = "Password123!"
         };
@@ -107,10 +108,22 @@ public class AuthServiceTests
     [Fact]
     public async Task Login_InvalidEmail_ThrowsUnauthorized()
     {
-        var service = CreateService(nameof(Login_InvalidEmail_ThrowsUnauthorized));
+        var dbName = nameof(Login_InvalidEmail_ThrowsUnauthorized);
+        var service = CreateService(dbName);
+        var tenantId = Guid.NewGuid();
+
+        var register = new RegisterRequestDto
+        {
+            OrganizationName = "TestOrg",
+            Username = "validuser",
+            Email = "valid@example.com",
+            Password = "Password123!"
+        };
+        await service.RegisterAsync(register, tenantId);
 
         var login = new LoginRequestDto
         {
+            OrganizationName = "TestOrg",
             Email = "nonexistent@example.com",
             Password = "Password123!"
         };
@@ -139,6 +152,7 @@ public class AuthServiceTests
 
         var login = new LoginRequestDto
         {
+            OrganizationName = "TestOrg",
             Email = "wrongpw@example.com",
             Password = "WrongPassword1!"
         };

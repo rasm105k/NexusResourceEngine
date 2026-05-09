@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,8 @@ public class AuthService : IAuthService
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _passwordHasher.HashPassword(null!, request.Password),
-            Role = "Admin"
+            Role = "Admin",
+            IsActive = true
         };
 
         _context.Users.Add(user);
@@ -53,14 +55,100 @@ public class AuthService : IAuthService
         return GenerateToken(user, tenantId);
     }
 
+    public async Task<LoginResponseDto> RegisterMemberAsync(RegisterMemberDto request, Guid tenantId)
+    {
+        var user = new User
+        {
+            UserId = Guid.NewGuid(),
+            TenantId = tenantId,
+            Username = request.Username,
+            Email = request.Email,
+            PasswordHash = _passwordHasher.HashPassword(null!, request.Password),
+            Role = "Member",
+            IsActive = true
+        };
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return GenerateToken(user, tenantId);
+    }
+
+    public async Task<InviteResponseDto> InviteAsync(InviteRequestDto request, Guid tenantId)
+    {
+        var results = new List<InviteResultDto>();
+
+        foreach (var invitee in request.Invitees)
+        {
+            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+                .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+
+            var user = new User
+            {
+                UserId = Guid.NewGuid(),
+                TenantId = tenantId,
+                Username = invitee.Username,
+                Email = invitee.Email,
+                Role = "Member",
+                InviteToken = token,
+                InviteTokenExpiresAt = DateTime.UtcNow.AddDays(7),
+                IsActive = false
+            };
+
+            _context.Users.Add(user);
+
+            var inviteUrl = $"{request.RedirectUrl.TrimEnd('/')}?token={token}";
+            results.Add(new InviteResultDto
+            {
+                Email = invitee.Email,
+                InviteUrl = inviteUrl,
+                ExpiresAt = user.InviteTokenExpiresAt.Value
+            });
+        }
+
+        await _context.SaveChangesAsync();
+
+        return new InviteResponseDto { Invites = results };
+    }
+
+    public async Task<LoginResponseDto> AcceptInviteAsync(AcceptInviteDto request)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.InviteToken == request.Token);
+
+        if (user is null)
+            throw new UnauthorizedAccessException("Invalid invite token.");
+
+        if (user.InviteTokenExpiresAt < DateTime.UtcNow)
+            throw new UnauthorizedAccessException("Invite token has expired.");
+
+        user.PasswordHash = _passwordHasher.HashPassword(null!, request.Password);
+        user.IsActive = true;
+        user.InviteToken = null;
+        user.InviteTokenExpiresAt = null;
+
+        await _context.SaveChangesAsync();
+
+        return GenerateToken(user, user.TenantId);
+    }
+
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.OrganizationName == request.OrganizationName);
+
+        if (tenant is null)
+        {
+            throw new UnauthorizedAccessException("Invalid organization name.");
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email && u.TenantId == tenant.TenantId);
 
         if (user is null)
         {
             throw new UnauthorizedAccessException("Invalid email or password.");
         }
+
+        if (!user.IsActive)
+            throw new UnauthorizedAccessException("Account not activated. Please accept your invite.");
 
         var result = _passwordHasher.VerifyHashedPassword(null!, user.PasswordHash, request.Password);
 

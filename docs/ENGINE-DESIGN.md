@@ -58,6 +58,21 @@ Handles HTTP requests and responses:
 - Validation checks resource state (IsBookable) and time conflicts
 - Database constraints and transactions prevent race conditions
 
+## Role-Based Access Control (RBAC)
+
+### Current implementation (v1)
+- Two roles: `Admin` and `Member`, stored as a string on `User.Role`.
+- `Admin` — full access: manage users (create, change roles), manage resources, states, and transitions.
+- `Member` — basic access: book resources, transition states where `RequiredRole` matches.
+- JWT carries a `ClaimTypes.Role` claim; ASP.NET Core `[Authorize(Roles = "...")]` enforces at endpoint level.
+- `PATCH /users/{id}/role` prevents self-demotion to avoid orphaned orgs.
+
+### Future (dedicated permission table)
+Replace the string-based role with a `Permissions` table that maps roles to granular flags:
+- `CanManageUsers`, `CanManageResources`, `CanTransitionStates`, `CanManageStates`
+- Allows tenants to define custom roles beyond Admin/Member.
+- Planned for post-Dockerization backlog.
+
 ## Security & Validation
 - JWT-based authentication with role-based access control
 - Global exception handling returning RFC 7807 Problem Details

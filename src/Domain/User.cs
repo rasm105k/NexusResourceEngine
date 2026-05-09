@@ -8,4 +8,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
+    public string? InviteToken { get; set; }
+    public DateTime? InviteTokenExpiresAt { get; set; }
+    public bool IsActive { get; set; }
 }

@@ -12,7 +12,7 @@ public static class BookingEndpoints
         {
             var service = context.RequestServices.GetRequiredService<IBookingService>();
             var tenantId = (Guid)context.Items["TenantId"]!;
-            var userId = Guid.NewGuid();
+            var userId = Guid.Parse(context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
             var result = await service.CreateAsync(dto, userId, tenantId);
             return Results.Created($"/bookings/{result.BookingId}", result);
         });

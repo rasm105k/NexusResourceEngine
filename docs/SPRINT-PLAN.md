@@ -45,8 +45,13 @@ Each sprint produces a buildable, verifiable increment. `dotnet build` and `dotn
 - 8 new tests: 4 service (ResourceStateService) + 4 service (StateTransitionService) + 2 integration (endpoint stubs).
 - ~~Verify: `dotnet build` and `dotnet test` both pass.~~ ✅
 
-## Sprint 6 — Resource management (NEXT)
+## ✅ Sprint 6 — Resource management + Auth cleanup + Admin roles (IN PROGRESS)
 
+- **Auth cleanup:** Removed garbage code, fixed userId extraction from JWT in booking endpoint.
+- **Org-scoped login:** `POST /auth/login` now requires `organizationName` to scope login to a tenant.
+- **Member registration:** `POST /auth/register-member` (Admin-only) adds a `Member`-role user to an existing org.
+- **User management:** `IUserService` + `UserService` — `GET /users` (list, tenant-scoped), `PATCH /users/{id}/role` (Admin-only, blocks self-demotion).
+- **Role model:** Two roles — `Admin` (full access) and `Member` (basic user). String-based for now; dedicated permission table in backlog.
 - `ResourceService` implementation.
 - `GET /resources` (with filters), `POST /resources`, `PATCH /resources/{id}/state` (validates against allowed transitions + required role).
 
@@ -59,6 +64,13 @@ Each sprint produces a buildable, verifiable increment. `dotnet build` and `dotn
 
 - `Dockerfile` + `docker-compose.yml` (API + SQL Server container).
 - Environment-based config.
+
+---
+
+## Backlog
+
+### Dedicated permission table
+Replace the string-based `Role` with a proper `Permissions` table supporting granular, per-tenant permissions. Each role maps to a set of permission flags (e.g., `canManageUsers`, `canManageResources`, `canTransitionStates`), allowing tenants to define custom roles beyond Admin/Member.
 
 ---
 
