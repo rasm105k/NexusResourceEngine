@@ -42,6 +42,14 @@ Dependency inversion: Infrastructure references Application to implement its ser
 ## Sprint plan
 `docs/SPRINT-PLAN.md` at repo root defines the build order. Each sprint ends with `dotnet build` verification.
 
+## Postman collection drift check
+Run `pwsh scripts/check-postman-drift.ps1` before committing API changes. It starts the API, fetches the OpenAPI spec, and compares paths against `NexusResourceEngine.postman_collection.json`. Exits with code 1 if drift is found.
+
+Run with `-NoStart` if the API is already running on port 5299 to skip the restart:
+```
+pwsh scripts/check-postman-drift.ps1 -NoStart
+```
+
 ## Testing
 xUnit test project at `src/Tests/`. Test per sprint as defined in sprint plan.
 

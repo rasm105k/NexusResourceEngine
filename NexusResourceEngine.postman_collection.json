@@ -5,25 +5,76 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "localhost:5279" },
-    { "key": "authToken", "value": "" },
-    { "key": "orgName", "value": "Room Booking Demo" },
-    { "key": "demoEmail", "value": "demo@example.com" },
-    { "key": "demoPassword", "value": "Demo@123" },
-    { "key": "memberUserId", "value": "" },
-    { "key": "inviteUrl", "value": "" },
-    { "key": "inviteToken", "value": "" },
-    { "key": "stateAvailable", "value": "" },
-    { "key": "stateBooked", "value": "" },
-    { "key": "stateOccupied", "value": "" },
-    { "key": "stateCleaning", "value": "" },
-    { "key": "stateMaintenance", "value": "" },
-    { "key": "resourceId", "value": "" },
-    { "key": "bookingId", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "localhost:5279"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    },
+    {
+      "key": "orgName",
+      "value": "Room Booking Demo"
+    },
+    {
+      "key": "demoEmail",
+      "value": "demo@example.com"
+    },
+    {
+      "key": "demoPassword",
+      "value": "Demo@123"
+    },
+    {
+      "key": "memberUserId",
+      "value": ""
+    },
+    {
+      "key": "inviteUrl",
+      "value": ""
+    },
+    {
+      "key": "inviteToken",
+      "value": ""
+    },
+    {
+      "key": "stateAvailable",
+      "value": ""
+    },
+    {
+      "key": "stateBooked",
+      "value": ""
+    },
+    {
+      "key": "stateOccupied",
+      "value": ""
+    },
+    {
+      "key": "stateCleaning",
+      "value": ""
+    },
+    {
+      "key": "stateMaintenance",
+      "value": ""
+    },
+    {
+      "key": "resourceId",
+      "value": ""
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    }
   ],
   "auth": {
     "type": "bearer",
-    "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
   },
   "item": [
     {
@@ -65,7 +116,12 @@
           "name": "Register",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"organizationName\": \"My Company\",\n  \"username\": \"admin\",\n  \"email\": \"admin@company.com\",\n  \"password\": \"P@ssw0rd123\"\n}"
@@ -91,7 +147,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"username\": \"jane\",\n  \"email\": \"jane@company.com\",\n  \"password\": \"MemberPass123\"\n}"
@@ -120,7 +181,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"redirectUrl\": \"http://{{baseUrl}}/accept-invite\",\n  \"invitees\": [\n    {\n      \"email\": \"bob@company.com\",\n      \"username\": \"bob\"\n    }\n  ]\n}"
@@ -132,7 +198,12 @@
           "name": "Accept Invite",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"token\": \"{{inviteToken}}\",\n  \"password\": \"BobPass123\"\n}"
@@ -158,7 +229,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"organizationName\": \"{{orgName}}\",\n  \"email\": \"{{demoEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}"
@@ -182,7 +258,12 @@
           "name": "Update User Role",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"role\": \"Admin\"\n}"
@@ -206,7 +287,12 @@
           "name": "Create State",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"In Transit\",\n  \"isBookable\": false,\n  \"colorCode\": \"#17a2b8\",\n  \"sortOrder\": 6\n}"
@@ -223,7 +309,12 @@
           "name": "Create Transition",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fromStateId\": \"{{stateAvailable}}\",\n  \"toStateId\": \"{{stateMaintenance}}\",\n  \"requiredRole\": \"Admin\"\n}"
@@ -247,10 +338,7 @@
           "name": "Get Resources by State",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://{{baseUrl}}/resources?stateId={{stateAvailable}}",
-              "query": [{ "key": "stateId", "value": "{{stateAvailable}}" }]
-            }
+            "url": "http://{{baseUrl}}/resources?stateId={{stateAvailable}}"
           }
         },
         {
@@ -271,7 +359,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Conference Room A\",\n  \"description\": \"Ground floor meeting room with 4K projector\",\n  \"currentStateId\": \"{{stateAvailable}}\",\n  \"latitude\": 51.5074,\n  \"longitude\": -0.1278,\n  \"metadata\": null\n}"
@@ -283,7 +376,12 @@
           "name": "Update Resource State",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"newStateId\": \"{{stateMaintenance}}\"\n}"
@@ -300,13 +398,7 @@
           "name": "Check Availability",
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "http://{{baseUrl}}/resources/{{resourceId}}/availability?start=2026-05-08T09:00:00Z&end=2026-05-08T17:00:00Z",
-              "query": [
-                { "key": "start", "value": "2026-05-08T09:00:00Z" },
-                { "key": "end", "value": "2026-05-08T17:00:00Z" }
-              ]
-            }
+            "url": "http://{{baseUrl}}/resources/{{resourceId}}/availability?start=2026-05-08T09:00:00Z&end=2026-05-08T17:00:00Z"
           }
         },
         {
@@ -327,7 +419,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"resourceId\": \"{{resourceId}}\",\n  \"startTime\": \"2026-05-08T09:00:00Z\",\n  \"endTime\": \"2026-05-08T10:00:00Z\"\n}"
@@ -339,7 +436,12 @@
           "name": "Update Booking Status",
           "request": {
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"status\": \"approved\"\n}"
